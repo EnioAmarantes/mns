@@ -1,0 +1,75 @@
+<mat-card>
+    <mat-card-header >
+        <mat-card-title><h1>🛒 Gestão de Produtos</h1></mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <form (ngSubmit)="saveProduct()">
+            <mat-form-field appearance="outline">
+                <mat-label for="name">Nome:</mat-label>
+                <input matInput [(ngModel)]="current.name" name="name" placeholder="Nome" required />
+            </mat-form-field>
+        
+            <mat-form-field appearance="outline">
+                <mat-label for="price">Preço (R$):</mat-label>
+                <span matTextPrefix>R$ &nbsp;</span>
+                <input matInput [(ngModel)]="current.price" name="price" type="number" placeholder="Preço" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label for="minStockQuantity">Qtde. Mínima em Estoque:</mat-label>
+                <input matInput [(ngModel)]="current.minStockQuantity" name="minStockQuantity" type="number" placeholder="Quantidade Mínima em Estoque" required />
+            </mat-form-field>
+
+            <button matButton="filled" type="submit">{{ current.id ? 'Atualizar' : 'Adicionar' }}</button>
+        </form>
+    </mat-card-content>
+</mat-card>
+
+@if (isLoading) {
+    <p>Carregando dados...</p>
+    <mat-spinner></mat-spinner>
+} @else {
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title><h3>📋 Lista de Produtos</h3></mat-card-title>
+            <mat-card-subtitle> Total de produtos: {{ products.length }} </mat-card-subtitle>
+            <mat-divider></mat-divider>
+        </mat-card-header>
+        <mat-card-content>
+            <table mat-table [dataSource]="products" class="mat-elevation-z8">
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Nome </th>
+                    <td mat-cell *matCellDef="let product"> {{product.name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="price">
+                    <th mat-header-cell *matHeaderCellDef> Preço (R$) </th>
+                    <td mat-cell *matCellDef="let product"> {{product.price | currency:'BRL':'symbol':'1.2-2'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="minStockQuantity">
+                    <th mat-header-cell *matHeaderCellDef> Qtde. Mínima em Estoque </th>
+                    <td mat-cell *matCellDef="let product"> {{product.minStockQuantity}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="totalStock">
+                    <th mat-header-cell *matHeaderCellDef> Qtde. Total em Estoque </th>
+                    <td mat-cell *matCellDef="let product">
+                        {{ getBalanceTotal(product) }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Ações </th>
+                    <td mat-cell *matCellDef="let product">
+                        <button matButton="filled" (click)="editProduct(product)">✏️</button>
+                        <button matButton="filled" (click)="deleteProduct(product.id)">🗑</button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getRowClass(row)"></tr>
+            </table>
+        </mat-card-content>
+    </mat-card>
+}

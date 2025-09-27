@@ -1,0 +1,50 @@
+<h2>📊 Dashboard</h2>
+
+<div class="cards">
+    <div class="card" [routerLink]="['/products']">
+        <a [routerLink]="['/produtos']">📦 Produtos: {{ totalProdutos }}</a>
+    </div>
+    <div class="card" [routerLink]="['/suppliers']">
+        <a [routerLink]="['/fornecedores']">🏭 Fornecedores: {{ totalFornecedores }}</a>
+    </div>
+    <div class="card" [routerLink]="['/estoque']">
+        <a [routerLink]="['/movimentacoes']">📊 Movimentações: {{ totalMovimentos }}</a>
+    </div>
+    <div class="card" [routerLink]="['/pdv']">
+        <a [routerLink]="['/vendas']">🛒 Vendas: {{ totalVendas }} (R$ {{ vendasReceita }})</a>
+    </div>
+</div>
+
+@if(isLoading) {
+    <p>Carregando dados...</p>
+    <mat-spinner></mat-spinner>
+} @else {
+    <div class="charts">
+        <div class="chart">
+        <h3>📦 Estoque Atual</h3>
+        <canvas baseChart
+            [data]="estoqueData"
+            [options]="chartOptions"
+            [type]="'bar'">
+        </canvas>
+        </div>
+
+        <div class="chart">
+        <h3>📈 Movimentos por Mês</h3>
+        <canvas baseChart
+            [data]="movimentoData"
+            [options]="chartOptions"
+            [type]="'line'">
+        </canvas>
+        </div>
+
+        <div class="chart">
+        <h3>💰 Fluxo de Caixa</h3>
+        <canvas baseChart
+            [data]="fluxoCaixaData"
+            [options]="chartOptions"
+            [type]="'bar'">
+        </canvas>
+        </div>
+    </div>
+}
