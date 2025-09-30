@@ -130,6 +130,7 @@ export class StockComponent implements OnInit {
     this.stockService.balances().subscribe({
       next: data => {
         this.balances = data;
+        this.filterMoviments();
         this.cdr.detectChanges();
       },
       error: err => {
@@ -166,7 +167,10 @@ export class StockComponent implements OnInit {
   addMovement() {
     this.stockService.create(this.movement).subscribe(() => {
       this.stockService.getAll()
-        .subscribe(stocks => this.stocks = stocks);
+        .subscribe(data => {
+          this.stocks = data
+          this.loadBalances()
+        });
         this.cdr.detectChanges();
     });
     this.movement = { id: 0, productId: '', warehouseId: '', quantity: 0, date: new Date(), type: 'entrada' };
