@@ -50,6 +50,13 @@ export class ProductsComponent implements OnInit {
       alert('Por favor, preencha o nome e o preço do produto.');
       return;
     }
+
+    if (typeof this.current.price === 'string') {
+      this.current.price = parseFloat((this.current.price as string).replace(',', '.'));
+    }
+
+    this.current.minStockQuantity = Math.floor(this.current.minStockQuantity);
+
     if (this.current.id !== '') {
       this.productsService.update(this.current.id, { ...this.current }).subscribe(p => {
         console.debug('Product updated:', p);
