@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StockBalance, StockEntry } from '../../core/models/stock.model';
 import { DatePipe, TitleCasePipe } from '@angular/common';
@@ -21,11 +21,12 @@ import { MatDivider } from '@angular/material/divider';
 import { MONTHS } from '../../core/models/months';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import { ProductCombobox } from "../../components/product-combobox";
 
 @Component({
   selector: 'app-stock',
   standalone: true,
-  imports: [FormsModule, DatePipe, MatCardHeader, MatCardModule, MatInputModule, MatButtonModule, CdkTableModule, MatListModule, MatSelectModule, MatTableModule, MatDivider, TitleCasePipe, MatIconModule, CommonModule],
+  imports: [FormsModule, DatePipe, MatCardHeader, MatCardModule, MatInputModule, MatButtonModule, CdkTableModule, MatListModule, MatSelectModule, MatTableModule, MatDivider, TitleCasePipe, MatIconModule, CommonModule, ProductCombobox],
   templateUrl: 'stock.component.html',
   styleUrls: ['stock.component.scss'],
 })
@@ -33,13 +34,11 @@ export class StockComponent implements OnInit {
   cdr = inject(ChangeDetectorRef);
   stockService = inject(StockService);
   warehousesService = inject(WarehousesService);
-  productsService = inject(ProductsService);
   suppliersService = inject(SuppliersService);
 
   warehouseName = '';
   filter: StockFilter = { type: '', year: new Date().getFullYear(), month: new Date().getMonth() + 1 };
 
-  products: Product[] = [];
   suppliers: Supplier[] = [];
   warehouses: Warehouse[] = [];
   stocks: StockEntry[] = [];
@@ -50,32 +49,20 @@ export class StockComponent implements OnInit {
   pendingRequests = 0;
   availableYears: number[] = [];
   availableMonths = MONTHS;
+  
+  selectedProduct: Product | null = null;
+  @ViewChild('productCombobox') productCombobox: ProductCombobox = new ProductCombobox();
 
-  movement: StockEntry = { id: 0, productId: '', warehouseId: '', quantity: 0, date: new Date(), type: 'entrada' };
+  movement: StockEntry = { id: 0, productId: '', productName: '', warehouseId: '', quantity: 0, date: new Date(), type: 'entrada' };
   displayedColumns = ['date', 'product', 'warehouse', 'quantity', 'type', 'supplier'];
 
   ngOnInit() {
     console.log('StockComponent initialized');
-    this.loadProducts();
     this.loadSuppliers();
     this.loadWarehouses();
     this.loadStocks();
     this.loadBalances();
     this.filterMoviments();
-  }
-
-  loadProducts() {
-    this.setLoading();
-    this.productsService.getAll().subscribe({
-      next: data => {
-        this.products = data;
-        this.cdr.detectChanges();
-      },
-      error: err => {
-        console.error('Error loading products', err);
-      },
-      complete: () => this.setUnloading()
-    });
   }
 
   loadSuppliers() {
@@ -165,6 +152,15 @@ export class StockComponent implements OnInit {
   }
 
   addMovement() {
+    if(!this.selectedProduct){
+      alert('Selecione um produto')
+      return
+    }
+    if (this.movement.quantity <= 0){
+      alert('Quantidade precisa ser maior que zero')
+      return
+    }
+    this.movement.productId = this.selectedProduct.id;
     this.stockService.create(this.movement).subscribe(() => {
       this.stockService.getAll()
         .subscribe(data => {
@@ -173,7 +169,8 @@ export class StockComponent implements OnInit {
         });
         this.cdr.detectChanges();
     });
-    this.movement = { id: 0, productId: '', warehouseId: '', quantity: 0, date: new Date(), type: 'entrada' };
+    this.movement = { id: 0, productId: '', productName: '', warehouseId: '', quantity: 0, date: new Date(), type: 'entrada' };
+    this.productCombobox.clear();
   }
 
   filterMoviments() {
@@ -195,7 +192,7 @@ export class StockComponent implements OnInit {
   }
 
   productName(id: string) {
-    return this.products.find(p => p.id === id)?.name ?? 'N/A';
+    return this.stocks.find(s => s.productId === id)?.productName ?? 'N/A';
   }
 
   supplierName(id?: string) {

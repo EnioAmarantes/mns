@@ -1,6 +1,7 @@
 export interface StockEntry {
   id: number;
   productId: string;
+  productName: string;
   warehouseId: string;
   supplierId?: string;   // só preenchido em entradas
   quantity: number;

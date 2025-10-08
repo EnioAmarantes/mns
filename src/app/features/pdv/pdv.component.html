@@ -5,14 +5,7 @@
 
     <mat-card-content>
         <form (ngSubmit)="addItem()">
-            <mat-form-field appearance="outline">
-                <mat-label for="productId">Produto:</mat-label>
-                <mat-select [(ngModel)]="selectedProductId" name="productId" required>
-                    @for (p of products; track p.id) {
-                        <mat-option [value]="p.id">{{ p.name }} - R$ {{ p.price }}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
+            <app-product-combobox [(selectedProduct)]="selectedProduct" #productCombobox></app-product-combobox>
 
             <mat-form-field appearance="outline">
                 <mat-label for="quantity">Quantidade:</mat-label>
