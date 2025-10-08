@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Sale, SaleItem } from '../../core/models/sale.model';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Product } from '../../core/models/product.model';
 import { ProductsService } from '../../core/services/products.service';
 import { SalesService } from '../../core/services/sales.service';
@@ -12,11 +12,15 @@ import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatListModule } from '@angular/material/list';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { map, Observable, startWith } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-pdv',
   standalone: true,
-  imports: [FormsModule, DatePipe, MatCardModule, MatCardModule, MatFormField, MatInputModule, MatSelectModule, MatButtonModule, MatTableModule, MatListModule, MatProgressSpinnerModule],
+  imports: [FormsModule, MatFormFieldModule, ReactiveFormsModule, DatePipe, CurrencyPipe, MatCardModule, MatCardModule, MatFormField, MatInputModule, MatSelectModule, MatButtonModule, MatTableModule, MatListModule, MatProgressSpinnerModule, MatAutocompleteModule, AsyncPipe],
   templateUrl: 'pdv.component.html'
 })
 export class PdvComponent implements OnInit{
@@ -29,6 +33,8 @@ export class PdvComponent implements OnInit{
   quantity: number = 1;
 
   products: Product[] = [];
+  productControl = new FormControl('');
+  filteredProducts: Observable<Product[]> = new Observable<Product[]>();
   sales: Sale[] = [];
 
   pendingRequests = 0;
@@ -37,6 +43,19 @@ export class PdvComponent implements OnInit{
     console.log('PDV Component initialized');
     this.loadProducts();
     this.loadSales();
+    this.loadFilteredProducts();
+  }
+
+  loadFilteredProducts() {
+    this.filteredProducts = this.productControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterProducts(value || ''))
+    );
+  }
+
+  private _filterProducts(value: string): Product[] {
+    const filterValue = value.toLowerCase();
+    return this.products.filter(product => product.name.toLowerCase().includes(filterValue));
   }
 
   loadProducts() {
@@ -44,6 +63,7 @@ export class PdvComponent implements OnInit{
     this.productsService.getAll().subscribe({
       next: data => {
         this.products = data;
+        this.productControl.setValue(this.productControl.value || '');
         this.cdr.detectChanges();
       },
       error: err => {
@@ -91,8 +111,11 @@ export class PdvComponent implements OnInit{
   };
 
   addItem() {
-    const product = this.products.find(p => p.id === this.selectedProductId);
-    if (!product) return;
+    let product = this.products.find(p => p.id === this.selectedProductId);
+    if (!product){
+      alert('Produto inválido');
+      return;
+    }
 
     const item: SaleItem = {
       id: '',
@@ -113,6 +136,8 @@ export class PdvComponent implements OnInit{
     this.recalculateTotal();
 
     this.selectedProductId = null;
+    this.productControl.setValue('');
+    this.loadFilteredProducts()
     this.quantity = 1;
   }
 
