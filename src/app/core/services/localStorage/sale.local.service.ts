@@ -20,6 +20,7 @@ export class SalesLocalStorageService extends LocalStorageService<Sale> {
             this.stock.add({
                 id: Date.now(),
                 productId: item.productId,
+                productName: item.productName,
                 warehouseId: '1',
                 quantity: item.quantity,
                 date: new Date(),

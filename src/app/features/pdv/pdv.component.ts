@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Sale, SaleItem } from '../../core/models/sale.model';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Product } from '../../core/models/product.model';
 import { SalesService } from '../../core/services/sales.service';
 import { MatCardModule } from "@angular/material/card";
@@ -12,7 +12,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { AsyncPipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ProductCombobox } from "../../components/product-combobox";
 import { ViewChild } from '@angular/core';
@@ -20,7 +19,7 @@ import { ViewChild } from '@angular/core';
 @Component({
   selector: 'app-pdv',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, ReactiveFormsModule, DatePipe, CurrencyPipe, MatCardModule, MatCardModule, MatFormField, MatInputModule, MatSelectModule, MatButtonModule, MatTableModule, MatListModule, MatProgressSpinnerModule, MatAutocompleteModule, AsyncPipe, ProductCombobox],
+  imports: [FormsModule, MatFormFieldModule, ReactiveFormsModule, DatePipe, MatCardModule, MatCardModule, MatFormField, MatInputModule, MatSelectModule, MatButtonModule, MatTableModule, MatListModule, MatProgressSpinnerModule, MatAutocompleteModule, ProductCombobox],
   templateUrl: 'pdv.component.html'
 })
 export class PdvComponent implements OnInit{
