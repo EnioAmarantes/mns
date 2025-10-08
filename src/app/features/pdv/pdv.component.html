@@ -5,24 +5,7 @@
 
     <mat-card-content>
         <form (ngSubmit)="addItem()">
-            <mat-form-field appearance="outline">
-                <mat-label for="productId">Produto:</mat-label>
-                <input type="text"
-                    matInput
-                    placeholder="Buscar produto"
-                    aria-label="Buscar produto"
-                    [formControl]="productControl"
-                    [matAutocomplete]="auto"
-                    >
-
-                <mat-autocomplete #auto="matAutocomplete">
-                    @for (p of filteredProducts | async; track p.id) {
-                        <mat-option [value]="p.name" (onSelectionChange)="selectedProductId = p.id" (click)="selectedProductId = p.id">
-                            {{ p.name }} - {{ p.price | currency:'BRL':'symbol':'1.2-2' }}
-                        </mat-option>
-                    }
-                </mat-autocomplete>
-            </mat-form-field>
+            <app-product-combobox [(selectedProduct)]="selectedProduct" #productCombobox></app-product-combobox>
 
             <mat-form-field appearance="outline">
                 <mat-label for="quantity">Quantidade:</mat-label>

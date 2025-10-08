@@ -1,76 +1,44 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Sale, SaleItem } from '../../core/models/sale.model';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Product } from '../../core/models/product.model';
-import { ProductsService } from '../../core/services/products.service';
 import { SalesService } from '../../core/services/sales.service';
 import { MatCardModule } from "@angular/material/card";
 import { MatFormField, MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatListModule } from '@angular/material/list';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { ProductCombobox } from "../../components/product-combobox";
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-pdv',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, ReactiveFormsModule, DatePipe, CurrencyPipe, MatCardModule, MatCardModule, MatFormField, MatInputModule, MatSelectModule, MatButtonModule, MatTableModule, MatListModule, MatProgressSpinnerModule, MatAutocompleteModule, AsyncPipe],
+  imports: [FormsModule, MatFormFieldModule, ReactiveFormsModule, DatePipe, CurrencyPipe, MatCardModule, MatCardModule, MatFormField, MatInputModule, MatSelectModule, MatButtonModule, MatTableModule, MatListModule, MatProgressSpinnerModule, MatAutocompleteModule, AsyncPipe, ProductCombobox],
   templateUrl: 'pdv.component.html'
 })
 export class PdvComponent implements OnInit{
-  productsService = inject(ProductsService);
   salesService = inject(SalesService);
   cdr = inject(ChangeDetectorRef)
   isLoading = false;
 
-  selectedProductId: string | null = null;
+  selectedProduct: Product | null = null;
   quantity: number = 1;
 
-  products: Product[] = [];
-  productControl = new FormControl('');
-  filteredProducts: Observable<Product[]> = new Observable<Product[]>();
   sales: Sale[] = [];
 
   pendingRequests = 0;
+  @ViewChild('productCombobox') productCombobox: ProductCombobox = new ProductCombobox();
 
   ngOnInit() {
     console.log('PDV Component initialized');
-    this.loadProducts();
     this.loadSales();
-    this.loadFilteredProducts();
-  }
-
-  loadFilteredProducts() {
-    this.filteredProducts = this.productControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterProducts(value || ''))
-    );
-  }
-
-  private _filterProducts(value: string): Product[] {
-    const filterValue = value.toLowerCase();
-    return this.products.filter(product => product.name.toLowerCase().includes(filterValue));
-  }
-
-  loadProducts() {
-    this.setLoading();
-    this.productsService.getAll().subscribe({
-      next: data => {
-        this.products = data;
-        this.productControl.setValue(this.productControl.value || '');
-        this.cdr.detectChanges();
-      },
-      error: err => {
-        console.error('Error loading products', err);
-      },
-      complete: () => this.setUnloading()
-    });
   }
 
   loadSales() {
@@ -111,17 +79,17 @@ export class PdvComponent implements OnInit{
   };
 
   addItem() {
-    let product = this.products.find(p => p.id === this.selectedProductId);
-    if (!product){
+    if (!this.selectedProduct) {
       alert('Produto inválido');
       return;
     }
 
     const item: SaleItem = {
       id: '',
-      productId: product.id,
+      productId: this.selectedProduct.id,
+      productName: this.selectedProduct.name,
       quantity: this.quantity,
-      price: product.price
+      price: this.selectedProduct.price
     };
 
     if (this.current.items.some(i => i.productId === item.productId)) {
@@ -135,10 +103,9 @@ export class PdvComponent implements OnInit{
 
     this.recalculateTotal();
 
-    this.selectedProductId = null;
-    this.productControl.setValue('');
-    this.loadFilteredProducts()
+    this.selectedProduct = null;
     this.quantity = 1;
+    this.productCombobox.clear();
   }
 
   removeItem(id: string) {
@@ -152,7 +119,7 @@ export class PdvComponent implements OnInit{
   }
 
   productName(id: string) {
-    return this.products.find(p => p.id === id)?.name ?? 'N/A';
+    return this.current.items.find(i => i.productId == id)?.productName ?? 'N/A';
   }
 
   finalizarVenda() {

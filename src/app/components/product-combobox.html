@@ -1,0 +1,18 @@
+<mat-form-field appearance="outline">
+    <mat-label for="productId">Produto:</mat-label>
+    <input type="text"
+        matInput
+        placeholder="Buscar produto"
+        aria-label="Buscar produto"
+        [formControl]="productControl"
+        [matAutocomplete]="auto"
+        >
+
+    <mat-autocomplete #auto="matAutocomplete">
+        @for (p of filteredProducts | async; track p.id) {
+            <mat-option [value]="p.name" (onSelectionChange)="onProductChange(p.id)" (click)="onProductChange(p.id)">
+                {{ p.name }} - {{ p.price | currency:'BRL':'symbol':'1.2-2' }}
+            </mat-option>
+        }
+    </mat-autocomplete>
+</mat-form-field>
