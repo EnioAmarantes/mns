@@ -1,0 +1,18 @@
+<mat-form-field appearance="outline">
+    <mat-label for="categoryId">Categoria:</mat-label>
+    <input type="text"
+        matInput
+        placeholder="Buscar categoria"
+        aria-label="Buscar categoria"
+        [formControl]="categoryControl"
+        [matAutocomplete]="auto"
+        >
+
+    <mat-autocomplete #auto="matAutocomplete">
+        @for (c of filteredCategories | async; track c.id) {
+            <mat-option [value]="c.name" (onSelectionChange)="onCategoryChange(c.id)" (click)="onCategoryChange(c.id)">
+                {{ c.name }}
+            </mat-option>
+        }
+    </mat-autocomplete>
+</mat-form-field>

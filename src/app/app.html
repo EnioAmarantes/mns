@@ -10,11 +10,18 @@
   @if (isLoggedIn()) {
     <nav class="topbar-nav">
       <a routerLink="/dashboard" routerLinkActive="active">📊 Dashboard</a>
-      <a routerLink="/produtos" routerLinkActive="active">📦 Produtos</a>
+      <div class="group">
+        <a routerLink="/produtos" routerLinkActive="active">📦 Produtos</a>
+        <a routerLink="/categorias" routerLinkActive="active">🏷️ Categorias</a>
+      </div>
       <a routerLink="/fornecedores" routerLinkActive="active">🏭 Fornecedores</a>
       <a routerLink="/estoque" routerLinkActive="active">📊 Estoque</a>
-      <a routerLink="/financeiro" routerLinkActive="active">💰 Financeiro</a>
+      <div class="group">
+        <a routerLink="/financeiro" routerLinkActive="active">💰 Financeiro</a>
+        <!-- <a routerLink="/contas" routerLinkActive="active">🏦 Contas</a> -->
+      </div>
       <a routerLink="/pdv" routerLinkActive="active">🛒 PDV</a>
+      
       <a style="cursor: pointer;" (click)="logout()">🚪 Sair</a>
     </nav>
   }

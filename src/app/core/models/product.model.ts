@@ -1,3 +1,4 @@
+import { Category } from "./category.model";
 import { StockBalance } from "./stock.model";
 
 export interface Product {
@@ -6,4 +7,6 @@ export interface Product {
   price: number;
   minStockQuantity: number;
   stockBalances: StockBalance[];
+  categoryId?: string;
+  category: Category | null;
 }

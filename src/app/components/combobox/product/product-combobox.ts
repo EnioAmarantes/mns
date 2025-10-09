@@ -6,9 +6,9 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { Product } from "../core/models/product.model";
+import { Product } from "../../../core/models/product.model";
 import { map, Observable, startWith } from "rxjs";
-import { ProductsService } from "../core/services/products.service";
+import { ProductsService } from "../../../core/services/products.service";
 
 @Component({
     selector: 'app-product-combobox',
