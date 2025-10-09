@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Product } from '../../core/models/product.model';
 import { ProductsService } from '../../core/services/products.service';
@@ -10,12 +10,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { NullProduct } from '../../core/models/null-models/product.null';
+import { CategoryCombobox } from '../../components/combobox/category/category-combobox';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatInputModule, MatButtonModule, MatCardModule, MatListModule, MatTableModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, MatInputModule, MatButtonModule, MatCardModule, MatListModule, MatTableModule, MatProgressSpinnerModule, CategoryCombobox],
   templateUrl: 'products.component.html',
   styleUrls: ['products.component.scss'],
 })
@@ -25,9 +27,12 @@ export class ProductsComponent implements OnInit {
   cdr = inject(ChangeDetectorRef);
   products: Product[] = [];
   isLoading = false;
+  withoutCategory = '[Sem categoria]';
 
-  current: Product = { id: '', name: '', price: 0, minStockQuantity: 0, stockBalances: [] };
-  displayedColumns: string[] = ['name', 'price', 'minStockQuantity', 'totalStock', 'actions'];
+  @ViewChild('categoryCombobox') categoryCombobox: CategoryCombobox = new CategoryCombobox();
+
+  current: Product = new NullProduct();
+  displayedColumns: string[] = ['name', 'price', 'minStockQuantity', 'totalStock', 'category', 'actions'];
 
   ngOnInit() {
     this.loadProducts();
@@ -44,17 +49,23 @@ export class ProductsComponent implements OnInit {
     });
   }
 
+  clear() {
+    this.current = new NullProduct();
+    this.categoryCombobox.clear();
+  }
+
   saveProduct() {
     console.log('Saving product:', this.current);
     if (this.current.name.trim() === '' || this.current.price <= 0) {
       alert('Por favor, preencha o nome e o preço do produto.');
       return;
     }
-
+    
     if (typeof this.current.price === 'string') {
       this.current.price = parseFloat((this.current.price as string).replace(',', '.'));
     }
-
+    
+    this.current.categoryId = this.current.category ? this.current.category.id : undefined;
     this.current.minStockQuantity = Math.floor(this.current.minStockQuantity);
 
     if (this.current.id !== '') {
@@ -68,11 +79,16 @@ export class ProductsComponent implements OnInit {
         this.loadProducts();
       });
     }
-    this.current = { id: '', name: '', price: 0, minStockQuantity: 0, stockBalances: [] };
+    this.current = new NullProduct();
+    this.categoryCombobox.clear();
   }
 
   editProduct(p: Product) {
     this.current = { ...p };
+    this.current.categoryId = p.category ? p.category.id : undefined;
+    if (this.current.categoryId){
+      this.categoryCombobox.setCategoryById(this.current.categoryId);
+    }
   }
 
   deleteProduct(id: string) {

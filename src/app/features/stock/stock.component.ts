@@ -21,7 +21,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MONTHS } from '../../core/models/months';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { ProductCombobox } from "../../components/product-combobox";
+import { ProductCombobox } from "../../components/combobox/product/product-combobox";
 
 @Component({
   selector: 'app-stock',

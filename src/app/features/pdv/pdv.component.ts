@@ -13,7 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ProductCombobox } from "../../components/product-combobox";
+import { ProductCombobox } from "../../components/combobox/product/product-combobox";
 import { ViewChild } from '@angular/core';
 
 @Component({

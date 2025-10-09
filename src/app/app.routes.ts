@@ -7,6 +7,7 @@ import { FinancialComponent } from './features/finances/finance.component';
 import { PdvComponent } from './features/pdv/pdv.component';
 import { SuppliersComponent } from './features/suppliers/suppliers.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { CategoryComponent } from './features/categories/category.component';
 
 
 
@@ -23,6 +24,7 @@ export const routes: Routes = [
   
   // Áreas protegidas
   { path: 'produtos', component: ProductsComponent, canActivate: [AuthGuard] },
+  { path: 'categorias', component: CategoryComponent, canActivate: [AuthGuard] },
   { path: 'fornecedores', component: SuppliersComponent, canActivate: [AuthGuard] },
   { path: 'estoque', component: StockComponent, canActivate: [AuthGuard] },
   { path: 'financeiro', component: FinancialComponent, canActivate: [AuthGuard] },
