@@ -1,10 +1,111 @@
+
 .topbar {
-    background: #1976d2;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+        background: #1976d2;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+}
+
+.topbar-left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 180px;
+}
+
+.topbar-nav {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+}
+
+nav a {
+        color: white;
+        margin-right: 15px;
+        text-decoration: none;
+        font-weight: 500;
+        white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    .topbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px 8px;
+    }
+    .topbar-left {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    .topbar-nav {
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: flex-start;
+        width: 100%;
+    }
+    nav a {
+        margin-right: 8px;
+        font-size: 0.98em;
+    }
+    .group {
+        flex-direction: row;
+        gap: 4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .topbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 2vw;
+    }
+    .topbar-left {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+    .user-info {
+        margin: 4px 0 0 0;
+        text-align: center;
+        width: 100%;
+    }
+    .topbar-nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 8px;
+        width: 100%;
+        justify-items: center;
+        align-items: center;
+    }
+    nav a {
+        margin: 2px 0;
+        font-size: 0.95em;
+        width: 100%;
+        text-align: center;
+    }
+    .group {
+        flex-direction: column;
+        gap: 2px;
+        align-items: center;
+        width: 100%;
+    }
+    h1 {
+        font-size: 1em;
+        width: 100%;
+        line-height: 1.1;
+        margin: 0.2em 0;
+    }
 }
 
 .topbar-left {
